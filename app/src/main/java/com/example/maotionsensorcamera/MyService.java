@@ -3,6 +3,7 @@ package com.example.maotionsensorcamera;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Binder;
 import android.os.Build;
@@ -35,14 +36,14 @@ import java.util.TimerTask;
 
 public class MyService extends Service {
     public int counter=0;
-
+    SharedPreferences preferences;
     public MyService() {
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-
+        preferences=getSharedPreferences("address",Context.MODE_PRIVATE);
     }
 
     @Override
@@ -78,6 +79,7 @@ public class MyService extends Service {
         timerTask = new TimerTask() {
             public void run() {
                 Log.i("in timer", "in timer ++++  "+ (counter++));
+
                 getRequest();
             }
         };
@@ -98,7 +100,7 @@ public class MyService extends Service {
     }
   synchronized   void getRequest(){
 
-        String URL = "http://192.168.1.100:8080/ROOT/Test";
+        String URL = preferences.getString("address","")+"Test";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -139,7 +141,7 @@ public class MyService extends Service {
     public void upload(){
 
 
-        String url = "http://192.168.1.100:8080/ROOT/Upload?key=abc123";
+        String url = preferences.getString("address","")+"Upload?key=abc123";
         File f=new File(getFilesDir(),"photo.jpeg");
         HashMap<String,String> map=new HashMap<>();
        // map.put("key","abc123");
